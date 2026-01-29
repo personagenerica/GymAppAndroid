@@ -2,7 +2,7 @@ package com.gymapp.model;
 
 import java.io.Serializable;
 
-public class Usuario implements Serializable {
+public class Monitor implements Serializable {
 
     private String uid;
     private String nombre;
@@ -14,7 +14,7 @@ public class Usuario implements Serializable {
 
 
     // 🔹 Constructor completo
-    public Usuario(String uid, String nombre, String apellido,
+    public Monitor(String uid, String nombre, String apellido,
                    String email, String telefono, int edad, String role) {
         this.uid = uid;
         this.nombre = nombre;

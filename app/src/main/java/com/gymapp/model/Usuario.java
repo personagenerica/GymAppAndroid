@@ -12,9 +12,7 @@ public class Usuario implements Serializable {
     private int edad;
     private String role;
 
-    // 🔹 Constructor vacío (OBLIGATORIO para Firebase / Gson)
-    public Usuario() {
-    }
+
 
     // 🔹 Constructor completo
     public Usuario(String uid, String nombre, String apellido,

@@ -1,77 +1,44 @@
 package com.gymapp.model;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
-import java.time.LocalDate;
 
 public class Producto implements Serializable {
+
+    @SerializedName("id")
     private int id;
 
-    private String ticket;
-    @SerializedName("nombre_prod")
+    @SerializedName("tipo")
+    private String tipo;
+
+    @SerializedName("nombre")
     private String nombre;
-    private CategoriaProducto categoria;
+
+    @SerializedName("precio")
     private double precio;
-    private Integer cantidad;
 
+    @SerializedName("stock")
+    private int stock;
 
-    public int getId() {
-        return id;
-    }
+    @SerializedName("version")
+    private int version;
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    // Getters y setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public String getTicket() {
-        return ticket;
-    }
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 
-    public void setTicket(String ticket) {
-        this.ticket = ticket;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public double getPrecio() { return precio; }
+    public void setPrecio(double precio) { this.precio = precio; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public int getStock() { return stock; }
+    public void setStock(int stock) { this.stock = stock; }
 
-    public CategoriaProducto getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(CategoriaProducto categoria) {
-        this.categoria = categoria;
-    }
-
-    public double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(double precio) {
-        this.precio = precio;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Producto(int id, String nombre, CategoriaProducto categoria, double precio, Integer cantidad) {
-        this.id = id;
-        this.nombre = nombre;
-        this.categoria = categoria;
-        this.precio = precio;
-        this.cantidad = cantidad;
-    }
-
-
+    public int getVersion() { return version; }
+    public void setVersion(int version) { this.version = version; }
 }
-

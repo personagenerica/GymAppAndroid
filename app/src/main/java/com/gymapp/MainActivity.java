@@ -2,6 +2,9 @@ package com.gymapp;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,10 +12,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.gymapp.adapter.ProductoAdapter;
 import com.gymapp.database.ApiClient;
 import com.gymapp.model.Producto;
 import com.gymapp.services.ProductoService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,37 +26,57 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private ProductoService productoService;
+    private ListView lvProducts;
+    //Adapter es demasido generico utilizamos el suyo
+    private ProductoAdapter adapter;
+
+    private Spinner spinnerProductos;
+
+    private Button btnListar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-// Creación e Inicialización del Servicio
-        productoService = ApiClient.getClient(getBaseContext()).create(ProductoService.class);
-        obtenerListadoProductos(); // Llamada al listado de productos
+
+        lvProducts = findViewById(R.id.lvProducts);
+        spinnerProductos = findViewById(R.id.spinnerProductos);
+        btnListar = findViewById(R.id.btnListar);
+
+        adapter = new ProductoAdapter(this, new ArrayList<>());
+        lvProducts.setAdapter(adapter);
+
+        productoService = ApiClient.getClient(getBaseContext())
+                .create(ProductoService.class);
+
+        // 👉 AQUÍ conectas el botón
+        btnListar.setOnClickListener(v -> listarProductos());
     }
 
-    private void obtenerListadoProductos() {
+
+
+
+    //Aqui listamos todos los productos
+    private void listarProductos() {
         Call<List<Producto>> call = productoService.getProductos();
         call.enqueue(new Callback<List<Producto>>() {
+
             @Override
-            //Bien
             public void onResponse(Call<List<Producto>> call, Response<List<Producto>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Producto> productos = response.body();
-                    for (Producto p : productos) {
-                        Log.i("Producto", "Nombre: " + p.getNombre());
-                    }
+                    adapter.clear();
+                    adapter.addAll(response.body());
+                    adapter.notifyDataSetChanged();
                 }
             }
 
             @Override
-            //Si falla
             public void onFailure(Call<List<Producto>> call, Throwable t) {
-                Log.e("Error", t.getMessage(), t);
-
+                Log.e("Error", "Error al listar productos", t);
             }
         });
     }
+
 
 }

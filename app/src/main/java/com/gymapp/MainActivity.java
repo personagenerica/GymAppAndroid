@@ -31,8 +31,11 @@ public class MainActivity extends AppCompatActivity {
     private ProductoAdapter adapter;
 
     private Spinner spinnerProductos;
-
+    //Botones
     private Button btnListar;
+    private Button btnCrear;
+    private Button btnEditar;
+    private Button btnEliminar;
 
 
     @Override
@@ -43,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         lvProducts = findViewById(R.id.lvProducts);
         spinnerProductos = findViewById(R.id.spinnerProductos);
         btnListar = findViewById(R.id.btnListar);
+        btnCrear = findViewById(R.id.btnCrear);
+        btnEditar = findViewById(R.id.btnEditar);
+        btnEliminar = findViewById(R.id.btnEliminar);
 
         adapter = new ProductoAdapter(this, new ArrayList<>());
         lvProducts.setAdapter(adapter);
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 👉 AQUÍ conectas el botón
         btnListar.setOnClickListener(v -> listarProductos());
+        btnCrear.setOnClickListener(v -> crearProducto());
     }
 
 
@@ -77,6 +84,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    //Aqui creamos un producto
+    private void crearProducto() {
+        Producto producto = new Producto();
+        producto.setNombre("Producto de prueba");
+        producto.setTipo("General");
+        producto.setPrecio(10.0);
+        producto.setStock(5);
+        producto.setVersion(1);
+
+        productoService.crearProducto(producto).enqueue(new Callback<Producto>() {
+            @Override
+            public void onResponse(Call<Producto> call, Response<Producto> response) {
+                if (response.isSuccessful()) {
+                    listarProductos();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Producto> call, Throwable t) {
+                Log.e("API", "Error al crear producto", t);
+            }
+        });
+    }
+
+
+    public Producto getById (int id){
+        Producto producto = null;
+        return producto;
+    }
+
+
+
 
 
 }

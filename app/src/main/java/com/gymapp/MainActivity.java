@@ -2,15 +2,13 @@ package com.gymapp;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.gymapp.adapter.ProductoAdapter;
 import com.gymapp.database.ApiClient;
@@ -27,16 +25,15 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private ProductoService productoService;
     private ListView lvProducts;
-    //Adapter es demasido generico utilizamos el suyo
     private ProductoAdapter adapter;
-
     private Spinner spinnerProductos;
-    //Botones
+
     private Button btnListar;
     private Button btnCrear;
     private Button btnEditar;
     private Button btnEliminar;
 
+    private Producto productoSeleccionado; // Aquí guardamos el producto que el usuario selecciona
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +53,38 @@ public class MainActivity extends AppCompatActivity {
         productoService = ApiClient.getClient(getBaseContext())
                 .create(ProductoService.class);
 
-        // 👉 AQUÍ conectas el botón
+        // Selección de producto desde ListView
+        lvProducts.setOnItemClickListener((parent, view, position, id) -> {
+            productoSeleccionado = adapter.getItem(position);
+            Log.d("API", "Producto seleccionado: " + productoSeleccionado.getNombre());
+        });
+
+        // Botones
         btnListar.setOnClickListener(v -> listarProductos());
         btnCrear.setOnClickListener(v -> crearProducto());
+        btnEditar.setOnClickListener(v -> {
+            if (productoSeleccionado != null) {
+                editarProducto(productoSeleccionado);
+            } else {
+                Log.e("API", "No hay producto seleccionado para editar");
+            }
+        });
+        btnEliminar.setOnClickListener(v -> {
+            if (productoSeleccionado != null) {
+                eliminarProducto(productoSeleccionado);
+            } else {
+                Log.e("API", "No hay producto seleccionado para eliminar");
+            }
+        });
+
+        // Cargar lista inicial
+        listarProductos();
     }
 
-
-
-
-    //Aqui listamos todos los productos
+    // Listar productos
     private void listarProductos() {
         Call<List<Producto>> call = productoService.getProductos();
         call.enqueue(new Callback<List<Producto>>() {
-
             @Override
             public void onResponse(Call<List<Producto>> call, Response<List<Producto>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -80,26 +96,24 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Producto>> call, Throwable t) {
-                Log.e("Error", "Error al listar productos", t);
+                Log.e("API", "Error listar productos", t);
             }
         });
     }
 
-    //Aqui creamos un producto
+    // Crear producto
     private void crearProducto() {
         Producto producto = new Producto();
-        producto.setNombre("Producto de prueba");
+        producto.setNombre("Producto prueba");
         producto.setTipo("General");
         producto.setPrecio(10.0);
         producto.setStock(5);
-        producto.setVersion(1);
 
         productoService.crearProducto(producto).enqueue(new Callback<Producto>() {
             @Override
             public void onResponse(Call<Producto> call, Response<Producto> response) {
-                if (response.isSuccessful()) {
-                    listarProductos();
-                }
+                Log.d("API", "Producto creado OK");
+                listarProductos();
             }
 
             @Override
@@ -109,14 +123,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Editar producto existente
+    private void editarProducto(Producto productoExistente) {
+        productoExistente.setNombre("Producto modificado"); // Ejemplo
+        productoService.actualizarProducto(productoExistente.getId(), productoExistente)
+                .enqueue(new Callback<Producto>() {
+                    @Override
+                    public void onResponse(Call<Producto> call, Response<Producto> response) {
+                        Log.d("API", "Producto editado OK");
+                        listarProductos();
+                    }
 
-    public Producto getById (int id){
-        Producto producto = null;
-        return producto;
+                    @Override
+                    public void onFailure(Call<Producto> call, Throwable t) {
+                        Log.e("API", "Error al editar producto", t);
+                    }
+                });
     }
 
+    // Eliminar producto existente
+    private void eliminarProducto(Producto productoExistente) {
+        productoService.eliminarProducto(productoExistente.getId())
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        Log.d("API", "Producto eliminado OK");
+                        listarProductos();
+                    }
 
-
-
-
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("API", "Error al eliminar producto", t);
+                    }
+                });
+    }
 }

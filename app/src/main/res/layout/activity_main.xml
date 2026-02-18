@@ -5,49 +5,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <Spinner
-        android:id="@+id/spinnerProductos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/etNombre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Nombre del producto" />
-
-    <EditText
-        android:id="@+id/etTipo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Tipo del producto" />
-
-    <EditText
-        android:id="@+id/etPrecio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Precio"
-        android:inputType="numberDecimal" />
-
-    <EditText
-        android:id="@+id/etStock"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Stock"
-        android:inputType="number" />
-
-    <Button
-        android:id="@+id/btnListar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Listar" />
-
-    <Button
-        android:id="@+id/btnCrear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Crear" />
-
     <Button
         android:id="@+id/btnEditar"
         android:layout_width="match_parent"

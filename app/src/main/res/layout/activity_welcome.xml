@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#F0F4F8"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome_message"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#2C3E50"
+        android:layout_marginBottom="48dp"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/btnIniciarSesion"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="Iniciar sesión"
+        android:layout_marginTop="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:backgroundTint="#4CAF50"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:cornerRadius="24dp"/>
+
+    <Button
+        android:id="@+id/btnRegistrar"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="Registrarse"
+        android:layout_marginTop="20dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:backgroundTint="#2196F3"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:cornerRadius="24dp"
+        android:elevation="4dp"/>
+</LinearLayout>

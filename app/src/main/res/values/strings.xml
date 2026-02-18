@@ -1,5 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GymApp</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name">SCULPTED BY THE GODS</string>
+
+    <!-- 🛑 AÑADIDO: Este es el string que usa activity_welcome.xml 🛑 -->
+    <string name="welcome_message">Bienvenido a SCULPTED BY THE GODS</string>
+
+    <string name="app_funcionamiento_descripcion">
+        Esta aplicación utiliza la tecnología de Google Firestore para gestionar y sincronizar las reservas de clases en tiempo real.
+        \n\n- **Usuarios (Socio):** Puedes ver las próximas 3 clases disponibles (Lunes, Miércoles y Viernes), el aforo actual y reservar o cancelar tu cupo con un solo toque. El aforo máximo es de 30 personas.
+        \n\n- **Monitores/Admin:** Tienen acceso a la lista completa de personas reservadas para cada clase. Pueden eliminar reservas individuales o usar el botón "Finalizar Clase" para limpiar todas las reservas de un turno una vez que la clase ha terminado.
+        \n\nNuestro objetivo es asegurar que todos los socios puedan entrenar de forma segura y justa, respetando los límites de capacidad.
+    </string>
+
+    <string-array name="roles_array">
+        <item>user</item>
+        <item>monitor</item>
+        <item>admin</item>
+    </string-array>
+
 </resources>

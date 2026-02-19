@@ -13,8 +13,7 @@ public class Clase implements Serializable {
     private List<Usuario> usuarios;
     private Monitor monitor;
 
-
-    // 🔹 Constructor completo
+    // Constructor completo
     public Clase(int id, Date fechaInicio, Date fechaFin, int aforo,
                  List<Usuario> usuarios, Monitor monitor) {
         this.id = id;
@@ -25,52 +24,22 @@ public class Clase implements Serializable {
         this.monitor = monitor;
     }
 
-    // 🔹 Getters y Setters
-    public int getId() {
-        return id;
-    }
+    // Getters y Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public Date getFechaInicio() { return fechaInicio; }
+    public void setFechaInicio(Date fechaInicio) { this.fechaInicio = fechaInicio; }
 
-    public Date getFechaInicio() {
-        return fechaInicio;
-    }
+    public Date getFechaFin() { return fechaFin; }
+    public void setFechaFin(Date fechaFin) { this.fechaFin = fechaFin; }
 
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
+    public int getAforo() { return aforo; }
+    public void setAforo(int aforo) { this.aforo = aforo; }
 
-    public Date getFechaFin() {
-        return fechaFin;
-    }
+    public List<Usuario> getUsuarios() { return usuarios; }
+    public void setUsuarios(List<Usuario> usuarios) { this.usuarios = usuarios; }
 
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-
-    public int getAforo() {
-        return aforo;
-    }
-
-    public void setAforo(int aforo) {
-        this.aforo = aforo;
-    }
-
-    public List<Usuario> getUsuarios() {
-        return usuarios;
-    }
-
-    public void setUsuarios(List<Usuario> usuarios) {
-        this.usuarios = usuarios;
-    }
-
-    public Monitor getMonitor() {
-        return monitor;
-    }
-
-    public void setMonitor(Monitor monitor) {
-        this.monitor = monitor;
-    }
+    public Monitor getMonitor() { return monitor; }
+    public void setMonitor(Monitor monitor) { this.monitor = monitor; }
 }

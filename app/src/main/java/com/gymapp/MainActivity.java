@@ -3,28 +3,12 @@ package com.gymapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.gymapp.adapter.ProductoAdapter;
-import com.gymapp.database.ApiClient;
-import com.gymapp.model.Producto;
-import com.gymapp.services.ProductoService;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +19,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         BottomNavigationView bottomMenu = findViewById(R.id.navigation_menu);
 
+// Marcar el item seleccionado según la Activity actual
+        bottomMenu.setSelectedItemId(R.id.navigation_home); // Cambia según la Activity
+
+        bottomMenu.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.navigation_home)
+                startActivity(new Intent(this, ProductoActivity.class));
+            else if (item.getItemId() == R.id.navigation_search)
+                startActivity(new Intent(this, ProductoActivity.class));
+            else if (item.getItemId() == R.id.navigation_profile)
+                startActivity(new Intent(this, ClaseActivity.class));
+            return true;
+        });
+
 
     }
 
@@ -43,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         Button btnLogout = findViewById(R.id.btnLogout);
 
         btnLogout.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProductoActivity.class));
 
             // Obtener SharedPreferences
             SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);

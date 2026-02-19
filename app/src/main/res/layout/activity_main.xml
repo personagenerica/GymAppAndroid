@@ -2,69 +2,55 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <Spinner
-        android:id="@+id/spinnerProductos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/etNombre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Nombre del producto" />
-
-    <EditText
-        android:id="@+id/etTipo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Tipo del producto" />
-
-    <EditText
-        android:id="@+id/etPrecio"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Precio"
-        android:inputType="numberDecimal" />
-
-    <EditText
-        android:id="@+id/etStock"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Stock"
-        android:inputType="number" />
-
-    <Button
-        android:id="@+id/btnListar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Listar" />
-
-    <Button
-        android:id="@+id/btnCrear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Crear" />
 
 
     <Button
-        android:id="@+id/btnEditar"
+        android:id="@+id/btnClases"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Editar" />
+        android:text="Clases" />
 
     <Button
-        android:id="@+id/btnEliminar"
+        android:id="@+id/btnPerfil"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Eliminar" />
+        android:text="Perfil" />
 
-    <ListView
-        android:id="@+id/lvProducts"
+
+    <Button
+        android:id="@+id/btnProducto"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content"
+        android:text="Producto" />
+
+    <Button
+        android:id="@+id/btnMonitor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Monitor" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cerrar sesión"
+        android:layout_margin="16dp"/>
+
+    <!-- BottomNavigationView -->
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation_menu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu="@menu/nav_menu_item"/>
+
 
 </LinearLayout>

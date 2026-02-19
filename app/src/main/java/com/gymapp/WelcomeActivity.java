@@ -1,7 +1,9 @@
 package com.gymapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +19,13 @@ public class WelcomeActivity extends AppCompatActivity {
 
         btnIniciarSesion = findViewById(R.id.btnIniciarSesion);
         btnRegistrar = findViewById(R.id.btnRegistrar);
+        SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
+        String token = prefs.getString("jwt_token", null);
+
+        if (token != null && !token.isEmpty()) {
+            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
 
         btnIniciarSesion.setOnClickListener(v -> {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);

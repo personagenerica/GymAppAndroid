@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogout = findViewById(R.id.btnLogout);
 
         btnClases.setOnClickListener(v ->
-                startActivity(new Intent(this, ReservarClasesActivity.class)));
+                startActivity(new Intent(this, ProductoActivity.class)));
 
         btnMonitores.setOnClickListener(v ->
                 Toast.makeText(this, "Pantalla Monitores pendiente", Toast.LENGTH_SHORT).show());
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ProductoActivity.class)));
 
         btnPerfil.setOnClickListener(v ->
-                startActivity(new Intent(this, PerfilActivity.class)));
+                startActivity(new Intent(this, ProductoActivity.class)));
 
         btnLogout.setOnClickListener(v -> cerrarSesion());
 

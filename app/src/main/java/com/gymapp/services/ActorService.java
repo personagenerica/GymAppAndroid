@@ -7,6 +7,6 @@ import retrofit2.http.POST;
 
 public interface ActorService {
 
-    @POST("actores")
+    @POST("actor")  // Solo /actor
     Call<Actor> registrar(@Body Actor actor);
 }

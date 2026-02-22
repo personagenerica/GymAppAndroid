@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ProductoActivity.class)));
 
         btnPerfil.setOnClickListener(v ->
-                startActivity(new Intent(this, PerfilActivity.class)));
+                startActivity(new Intent(this, ProductoActivity.class)));
 
         btnLogout.setOnClickListener(v -> cerrarSesion());
 

@@ -9,20 +9,15 @@ public class Clase implements Serializable {
     private int id;
     private Date fechaInicio;
     private Date fechaFin;
-    private int aforo;
+
+    private int aforoMaximo;      // Capacidad total
+    private int plazasOcupadas;   // Mejor que calcular siempre usuarios.size()
+
     private List<Usuario> usuarios;
     private Monitor monitor;
 
-    // Constructor completo
-    public Clase(int id, Date fechaInicio, Date fechaFin, int aforo,
-                 List<Usuario> usuarios, Monitor monitor) {
-        this.id = id;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        this.aforo = aforo;
-        this.usuarios = usuarios;
-        this.monitor = monitor;
-    }
+    // Constructor vacío (IMPORTANTE para Retrofit)
+    public Clase() {}
 
     // Getters y Setters
     public int getId() { return id; }
@@ -34,12 +29,24 @@ public class Clase implements Serializable {
     public Date getFechaFin() { return fechaFin; }
     public void setFechaFin(Date fechaFin) { this.fechaFin = fechaFin; }
 
-    public int getAforo() { return aforo; }
-    public void setAforo(int aforo) { this.aforo = aforo; }
+    public int getAforoMaximo() { return aforoMaximo; }
+    public void setAforoMaximo(int aforoMaximo) { this.aforoMaximo = aforoMaximo; }
+
+    public int getPlazasOcupadas() { return plazasOcupadas; }
+    public void setPlazasOcupadas(int plazasOcupadas) { this.plazasOcupadas = plazasOcupadas; }
 
     public List<Usuario> getUsuarios() { return usuarios; }
     public void setUsuarios(List<Usuario> usuarios) { this.usuarios = usuarios; }
 
     public Monitor getMonitor() { return monitor; }
     public void setMonitor(Monitor monitor) { this.monitor = monitor; }
+
+    // 🔥 Método útil
+    public boolean estaCompleta() {
+        return plazasOcupadas >= aforoMaximo;
+    }
+
+    public int plazasDisponibles() {
+        return aforoMaximo - plazasOcupadas;
+    }
 }

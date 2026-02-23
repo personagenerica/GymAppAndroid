@@ -1,4 +1,6 @@
 package com.gymapp;
 
-public class ReservarClasesActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ReservarClasesActivity extends AppCompatActivity {
 }

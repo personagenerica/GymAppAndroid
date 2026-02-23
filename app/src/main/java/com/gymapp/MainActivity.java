@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
        Log.d("knsdnjn",  prefs.getString("jwt_token", "jwt_token"));
 
-
+        //Mostrar botones segun el rol
         if (rol.equals("Admin")){
 
 

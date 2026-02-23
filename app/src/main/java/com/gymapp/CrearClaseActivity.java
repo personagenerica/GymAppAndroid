@@ -13,7 +13,7 @@ import com.gymapp.model.Clase;
 import com.gymapp.model.Monitor;
 import com.gymapp.services.ClaseService;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import retrofit2.Call;
@@ -43,32 +43,29 @@ public class CrearClaseActivity extends AppCompatActivity {
 
     private void crearClase() {
         try {
-            // 1️⃣ Leer los EditText
-            String strFechaInicio = etFechaInicio.getText().toString(); // ej: 2026-02-23 18:00
-            String strFechaFin = etFechaFin.getText().toString();       // ej: 2026-02-23 19:00
+            // Leer campos
+            String strFechaInicio = etFechaInicio.getText().toString(); // ej: 2026-02-23T18:00:00+01:00
+            String strFechaFin = etFechaFin.getText().toString();       // ej: 2026-02-23T19:00:00+01:00
             int aforo = Integer.parseInt(etAforo.getText().toString());
 
-            // 2️⃣ Convertir a Date
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            Date fechaInicio = sdf.parse(strFechaInicio);
-            Date fechaFin = sdf.parse(strFechaFin);
-
-            // 3️⃣ Crear la clase
+            // Crear objeto Clase sin parsing manual, Gson hará la conversión
             Clase clase = new Clase();
-            clase.setFechaInicio(fechaInicio);
-            clase.setFechaFin(fechaFin);
+            clase.setFechaInicio(new Date(strFechaInicio)); // se recomienda usar Date o LocalDateTime según tu backend
+            clase.setFechaFin(new Date(strFechaFin));
             clase.setAforoMaximo(aforo);
             clase.setPlazasOcupadas(0);
-            clase.setUsuarios(null);
 
-            // 4️⃣ Monitor desde sesión
+            // Evitar null en usuarios
+            clase.setUsuarios(new ArrayList<>());
+
+            // Monitor desde sesión
             SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
             String username = prefs.getString("username", "");
             Monitor monitor = new Monitor();
             monitor.setUsername(username);
             clase.setMonitor(monitor);
 
-            // 5️⃣ Token y envío al backend
+            // Enviar al backend
             String token = prefs.getString("jwt_token", "");
             claseService.crearClase(clase, "Bearer " + token).enqueue(new Callback<Clase>() {
                 @Override

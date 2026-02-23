@@ -3,6 +3,7 @@ package com.gymapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -18,7 +19,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
+        String rol = prefs.getString("rol", "");
 
+
+       Log.d("knsdnjn",  prefs.getString("jwt_token", "jwt_token"));
+
+
+        if (rol.equals("Admin")){
+
+
+
+
+        }
         // =========================
         // BOTONES SUPERIORES
         // =========================
@@ -38,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ProductoActivity.class)));
 
         btnPerfil.setOnClickListener(v ->
-                startActivity(new Intent(this, ReservarClasesActivity.class)));
+                startActivity(new Intent(this, PerfilActivity.class)));
 
         btnLogout.setOnClickListener(v -> cerrarSesion());
 
@@ -63,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (id == R.id.navigation_profile) {
-                startActivity(new Intent(this, ProductoActivity.class));
+                startActivity(new Intent(this, PerfilActivity.class));
                 return true;
             }
 

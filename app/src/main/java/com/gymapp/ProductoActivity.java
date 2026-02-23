@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ public class ProductoActivity extends AppCompatActivity {
     private ProductoAdapter adapter;
     private Spinner spinnerProductos;
 
+    private EditText etNombre,etTipo,etPrecio,etStock;
     private Button btnListar;
     private Button btnCrear;
     private Button btnEditar;
@@ -49,6 +51,12 @@ public class ProductoActivity extends AppCompatActivity {
         btnCrear = findViewById(R.id.btnCrear);
         btnEditar = findViewById(R.id.btnEditar);
         btnEliminar = findViewById(R.id.btnEliminar);
+
+        //Edit text
+        etNombre = findViewById(R.id.etNombre);
+        etTipo = findViewById(R.id.etTipo);
+        etPrecio = findViewById(R.id.etPrecio);
+        etStock = findViewById(R.id.etStock);
 
         adapter = new ProductoAdapter(this, new ArrayList<>());
         lvProducts.setAdapter(adapter);
@@ -105,12 +113,43 @@ public class ProductoActivity extends AppCompatActivity {
     }
 
     // Crear producto
+    //Hay que poner los text
     private void crearProducto() {
+
+        String nombre = etNombre.getText().toString();
+        String tipo = etTipo.getText().toString();
+        String precioStr = etPrecio.getText().toString().trim(); // Paso 1: texto
+        Integer precio = 0; // valor por defecto
+
+        if(!precioStr.isEmpty()) {
+            try {
+                precio = Integer.parseInt(precioStr); // Paso 2: parsear a Integer
+            } catch (NumberFormatException e) {
+                // Manejar error de número inválido
+                Toast.makeText(this, "Precio inválido", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        String stockStr = etStock.getText().toString().trim(); // Paso 1: texto
+        Integer stock = 0; // valor por defecto
+
+        if(!stockStr.isEmpty()) {
+            try {
+                stock = Integer.parseInt(precioStr); // Paso 2: parsear a Integer
+            } catch (NumberFormatException e) {
+                // Manejar error de número inválido
+                Toast.makeText(this, "Stock inválido", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
+
         Producto producto = new Producto();
-        producto.setNombre("Producto prueba");
-        producto.setTipo("General");
-        producto.setPrecio(10.0);
-        producto.setStock(5);
+
+        producto.setNombre(nombre);
+        producto.setTipo(tipo);
+        producto.setPrecio(precio);
+        producto.setStock(stock);
 
         productoService.crearProducto(producto).enqueue(new Callback<Producto>() {
             @Override

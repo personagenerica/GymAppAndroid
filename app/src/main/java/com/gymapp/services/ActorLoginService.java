@@ -15,6 +15,6 @@ public interface ActorLoginService {
     @POST("/actor/login")
     Call<ResponseBody> login(@Body ActorLogin actorLogin);
 
-    @GET("/actorLogin")
+    @GET("actor/actorLogin")
     Call<Actor> userLogin();
 }

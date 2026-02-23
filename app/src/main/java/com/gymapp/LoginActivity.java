@@ -3,6 +3,7 @@ package com.gymapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -55,11 +56,12 @@ public class LoginActivity extends AppCompatActivity {
 
                         // Guardar token
                         SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
-                        prefs.edit().putString("jwt_token", token).apply();
-                        //Obtenemos el usuario logueado y lo guardamos en Session Storage
-                        userLogin();
-                        Toast.makeText(LoginActivity.this, "Login correcto", Toast.LENGTH_SHORT).show();
 
+                        prefs.edit().putString("jwt_token", token).apply();
+                        userLogin();
+
+                        //Obtenemos el usuario logueado y lo guardamos en Session Storage
+                        Toast.makeText(LoginActivity.this, "Login correcto", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
 
@@ -84,22 +86,37 @@ public class LoginActivity extends AppCompatActivity {
         actorLoginService.userLogin().enqueue(new Callback<Actor>() {
             @Override
             public void onResponse(Call<Actor> call, Response<Actor> response) {
+
                 if (response.isSuccessful() && response.body() != null) {
+
                     Actor a = response.body();
-                    SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
-                    prefs.edit().putString("username", a.getUsername()).apply();
-                    prefs.edit().putString("rol", a.getRol().toString()).apply();
+                    //Guardamos los datos del usuario
+                    SharedPreferences prefs =
+                            getSharedPreferences("auth_prefs", MODE_PRIVATE);
+
+                    prefs.edit()
+                            .putString("username", a.getUsername())
+                            .putString("rol", a.getRol().toString())
+                            .putString("nombre", a.getNombre())
+                            .putString("email", a.getEmail())
+                            .apply();
+
+                    Toast.makeText(LoginActivity.this,
+                            "Login correcto",
+                            Toast.LENGTH_SHORT).show();
+
+
                 } else {
                     Toast.makeText(LoginActivity.this,
-                            "Error al cargar noticias",
+                            "Error cargando usuario",
                             Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call <Actor> call, Throwable t) {
+            public void onFailure(Call<Actor> call, Throwable t) {
                 Toast.makeText(LoginActivity.this,
-                        "Error de conexión",
+                        "Error conexión",
                         Toast.LENGTH_SHORT).show();
             }
         });

@@ -1,5 +1,6 @@
 package com.gymapp;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -7,29 +8,91 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.gymapp.database.ApiClient;
+import com.gymapp.model.Clase;
+import com.gymapp.model.Monitor;
+import com.gymapp.services.ClaseService;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CrearClaseActivity extends AppCompatActivity {
 
-    private EditText etNombreClase, etHora;
-    private Button btnGuardar;
+    private EditText etFechaInicio, etFechaFin, etAforo;
+    private Button btnCrear;
+    private ClaseService claseService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_clase);
 
-        etNombreClase = findViewById(R.id.etNombreClase);
-        etHora = findViewById(R.id.etHora);
-        btnGuardar = findViewById(R.id.btnGuardarClase);
+        etFechaInicio = findViewById(R.id.etFechaInicio);
+        etFechaFin = findViewById(R.id.etFechaFin);
+        etAforo = findViewById(R.id.etAforo);
+        btnCrear = findViewById(R.id.btnCrearClase);
 
-        btnGuardar.setOnClickListener(v -> {
+        claseService = ApiClient.getClient(this).create(ClaseService.class);
 
-            String nombre = etNombreClase.getText().toString();
-            String hora = etHora.getText().toString();
+        btnCrear.setOnClickListener(v -> crearClase());
+    }
 
-            // Aquí deberías llamar a tu API para guardar la clase
+    private void crearClase() {
+        try {
+            // 1️⃣ Leer los EditText
+            String strFechaInicio = etFechaInicio.getText().toString(); // ej: 2026-02-23 18:00
+            String strFechaFin = etFechaFin.getText().toString();       // ej: 2026-02-23 19:00
+            int aforo = Integer.parseInt(etAforo.getText().toString());
 
-            Toast.makeText(this, "Clase creada correctamente", Toast.LENGTH_SHORT).show();
-            finish();
-        });
+            // 2️⃣ Convertir a Date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date fechaInicio = sdf.parse(strFechaInicio);
+            Date fechaFin = sdf.parse(strFechaFin);
+
+            // 3️⃣ Crear la clase
+            Clase clase = new Clase();
+            clase.setFechaInicio(fechaInicio);
+            clase.setFechaFin(fechaFin);
+            clase.setAforoMaximo(aforo);
+            clase.setPlazasOcupadas(0);
+            clase.setUsuarios(null);
+
+            // 4️⃣ Monitor desde sesión
+            SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
+            String username = prefs.getString("username", "");
+            Monitor monitor = new Monitor();
+            monitor.setUsername(username);
+            clase.setMonitor(monitor);
+
+            // 5️⃣ Token y envío al backend
+            String token = prefs.getString("jwt_token", "");
+            claseService.crearClase(clase, "Bearer " + token).enqueue(new Callback<Clase>() {
+                @Override
+                public void onResponse(Call<Clase> call, Response<Clase> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(CrearClaseActivity.this, "Clase creada correctamente", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(CrearClaseActivity.this,
+                                "Error creando clase: " + response.code(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Clase> call, Throwable t) {
+                    Toast.makeText(CrearClaseActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Datos inválidos", Toast.LENGTH_SHORT).show();
+        }
     }
 }

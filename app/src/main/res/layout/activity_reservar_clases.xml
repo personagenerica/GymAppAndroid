@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollViewTurnos"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
+    android:padding="16dp"
     android:background="#FAFAFA">
 
-    <LinearLayout
-        android:id="@+id/layoutTurnos"
-        android:orientation="vertical"
+    <ListView
+        android:id="@+id/lvClases"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/btnReservar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:text="Reservar Clase"/>
 
-        <!-- El TextView de la fecha se agrega dinámicamente desde Java -->
-        <!-- El botón de cambio de vista también se agrega desde Java -->
-
-        <!-- Aquí se añadirán dinámicamente los CardView con los turnos -->
-
-    </LinearLayout>
-
-</ScrollView>
+    <Button
+        android:id="@+id/btnCrearClase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crear Clase"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

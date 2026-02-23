@@ -3,6 +3,9 @@ package com.gymapp.database;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import retrofit2.Retrofit;
@@ -14,6 +17,10 @@ public class ApiClient {
     private static Retrofit retrofit;
     public static Retrofit getClient(Context context) {
         if (retrofit == null) {
+            //Para las fechas
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") // ISO 8601
+                    .create();
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(chain -> {
                         //Obtiene la petición original (chain.request()) y se

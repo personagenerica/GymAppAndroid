@@ -1,5 +1,7 @@
 package com.gymapp.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -7,10 +9,15 @@ import java.util.List;
 public class Clase implements Serializable {
 
     private int id;
+    @SerializedName("fecha_inicio")
     private Date fechaInicio;
+
+    @SerializedName("fecha_fin")
     private Date fechaFin;
 
-    private int aforoMaximo;      // Capacidad total
+    @SerializedName("aforo")
+    private int aforoMaximo;
+
     private int plazasOcupadas;   // Mejor que calcular siempre usuarios.size()
 
     private List<Usuario> usuarios;

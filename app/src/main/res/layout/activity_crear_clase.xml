@@ -1,28 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="20dp"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <EditText
-        android:id="@+id/etNombreClase"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Nombre de la clase" />
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/etHora"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Hora (Ej: 18:00)"
-        android:layout_marginTop="10dp" />
+        <EditText
+            android:id="@+id/etFechaInicio"
+            android:hint="Fecha Inicio (YYYY-MM-DD HH:MM)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/btnGuardarClase"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Guardar Clase"
-        android:layout_marginTop="20dp"/>
+        <EditText
+            android:id="@+id/etFechaFin"
+            android:hint="Fecha Fin (YYYY-MM-DD HH:MM)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/etAforo"
+            android:hint="Aforo máximo"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btnCrearClase"
+            android:text="Crear Clase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
+</ScrollView>

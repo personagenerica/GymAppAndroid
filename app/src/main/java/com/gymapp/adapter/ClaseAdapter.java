@@ -1,10 +1,14 @@
-package com.gymapp;
+package com.gymapp.adapter;
 
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.gymapp.R;
 import com.gymapp.model.Clase;
+
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -14,6 +18,7 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private List<Object> items;
     private OnReservarClick listener;
+    private SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     public interface OnReservarClick {
         void onReservar(Clase clase);
@@ -40,7 +45,7 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         if (viewType == TYPE_HEADER) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_header, parent, false);
+                    .inflate(R.layout.item_dia_header, parent, false);
             return new HeaderViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext())
@@ -55,21 +60,40 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (holder instanceof HeaderViewHolder) {
             ((HeaderViewHolder) holder).txtHeader.setText((String) items.get(position));
         } else {
+
             Clase clase = (Clase) items.get(position);
             ClaseViewHolder vh = (ClaseViewHolder) holder;
 
-            vh.txtHora.setText(clase.getHora());
-            vh.txtAforo.setText("Aforo: " + clase.getAforoMax());
+            // 🕒 Mostrar horario
+            String horaInicio = formatoHora.format(clase.getFechaInicio());
+            String horaFin = formatoHora.format(clase.getFechaFin());
+            vh.txtHora.setText(horaInicio + " - " + horaFin);
 
-            vh.btnReservar.setOnClickListener(v -> listener.onReservar(clase));
+            // 👥 Mostrar aforo
+            vh.txtAforo.setText(
+                    "Plazas: " + clase.getPlazasOcupadas() +
+                            "/" + clase.getAforoMaximo() +
+                            " (Disponibles: " + clase.plazasDisponibles() + ")"
+            );
+
+            // 🔥 Estado del botón
+            if (clase.estaCompleta()) {
+                vh.btnReservar.setEnabled(false);
+                vh.btnReservar.setText("Clase completa");
+            } else {
+                vh.btnReservar.setEnabled(true);
+                vh.btnReservar.setText("Reservar");
+                vh.btnReservar.setOnClickListener(v -> listener.onReservar(clase));
+            }
         }
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         TextView txtHeader;
+
         HeaderViewHolder(View v) {
             super(v);
-            txtHeader = v.findViewById(R.id.txtHeader);
+            txtHeader = v.findViewById(R.id.txtDiaFecha);
         }
     }
 

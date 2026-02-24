@@ -20,7 +20,7 @@ public class Clase implements Serializable {
     private List<Usuario> usuarios;
 
     @SerializedName("monitor")
-    private MonitorId monitor; // solo el ID para backend
+    private MonitorId monitor; // solo el ID del monitor
 
     public Clase() {}
 
@@ -41,7 +41,7 @@ public class Clase implements Serializable {
 
     public MonitorId getMonitor() { return monitor; }
 
-    // Nuevo método para setear monitor por ID
+    // ✅ Método correcto para setear solo el ID del monitor
     public void setMonitorId(int monitorId) {
         this.monitor = new MonitorId(monitorId);
     }

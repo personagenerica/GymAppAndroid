@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gymapp.adapter.ClaseAdapter;
 import com.gymapp.database.ApiClient;
 import com.gymapp.model.Clase;
-import com.gymapp.model.MonitorId;
 import com.gymapp.services.ClaseService;
 
 import java.text.SimpleDateFormat;
@@ -46,7 +45,7 @@ public class ReservarClasesActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
         token = prefs.getString("jwt_token", "");
         rol = prefs.getString("rol", "");
-        monitorId = prefs.getInt("monitor_id", 0); // el ID del monitor guardado en login
+        monitorId = prefs.getInt("monitor_id", 0);
 
         claseService = ApiClient.getClient(this).create(ClaseService.class);
 
@@ -145,8 +144,8 @@ public class ReservarClasesActivity extends AppCompatActivity {
             clase.setFechaInicio(inicioIso);
             clase.setFechaFin(finIso);
             clase.setAforo(aforo);
-            clase.setUsuarios(new ArrayList<>());
-            clase.setMonitorId(monitorId); // ✅ solo el ID del monitor
+            clase.setUsuarios(new ArrayList<>());   // usuarios vacíos
+            clase.setMonitorId(monitorId);          // ✅ solo el ID
 
             // Llamada API
             claseService.crearClase(clase, "Bearer " + token)

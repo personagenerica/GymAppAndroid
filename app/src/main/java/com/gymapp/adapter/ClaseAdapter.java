@@ -25,87 +25,103 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public ClaseAdapter(List<Object> items, OnReservarClick listener) {
-        this.items = items;
+        this.items = items != null ? items : new ArrayList<>();
         this.listener = listener;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return items.get(position) instanceof String ? TYPE_HEADER : TYPE_CLASE;
+        Object o = items.get(position);
+        if (o instanceof String) return TYPE_HEADER;
+        if (o instanceof Clase) return TYPE_CLASE;
+        return TYPE_HEADER;
     }
 
     @Override
-    public int getItemCount() {
-        return items.size();
-    }
+    public int getItemCount() { return items.size(); }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == TYPE_HEADER) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_dia_header, parent, false);
+            View view = inflater.inflate(R.layout.item_dia_header, parent, false);
             return new HeaderViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_clase, parent, false);
+            View view = inflater.inflate(R.layout.item_clase, parent, false);
             return new ClaseViewHolder(view);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Object item = items.get(position);
 
         if (holder instanceof HeaderViewHolder) {
-            ((HeaderViewHolder) holder).txtHeader.setText((String) items.get(position));
-        } else {
+            String header = item instanceof String ? (String) item : "Sin día";
+            ((HeaderViewHolder) holder).txtHeader.setText(header);
 
-            Clase clase = (Clase) items.get(position);
+        } else if (holder instanceof ClaseViewHolder) {
+            if (!(item instanceof Clase)) return;
+
+            Clase clase = (Clase) item;
             ClaseViewHolder vh = (ClaseViewHolder) holder;
 
             // 🕒 Mostrar horario
-            String horaInicio = formatoHora.format(clase.getFechaInicio());
-            String horaFin = formatoHora.format(clase.getFechaFin());
-            vh.txtHora.setText(horaInicio + " - " + horaFin);
+            String horaTexto = "Hora no disponible";
+            try {
+                if (clase.getFechaInicio() != null && clase.getFechaFin() != null) {
+                    SimpleDateFormat sdfIso = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+                    sdfIso.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    Date inicio = sdfIso.parse(clase.getFechaInicio());
+                    Date fin = sdfIso.parse(clase.getFechaFin());
+
+                    String hInicio = formatoHora.format(inicio);
+                    String hFin = formatoHora.format(fin);
+                    horaTexto = hInicio + " - " + hFin;
+                }
+            } catch (Exception e) { e.printStackTrace(); }
+            vh.txtHora.setText(horaTexto);
 
             // 👥 Mostrar aforo
-            vh.txtAforo.setText(
-                    "Plazas: " + clase.getPlazasOcupadas() +
-                            "/" + clase.getAforoMaximo() +
-                            " (Disponibles: " + clase.plazasDisponibles() + ")"
-            );
+            int ocupadas = clase.getUsuarios() != null ? clase.getUsuarios().size() : 0;
+            int aforo = clase.getAforo();
+            int disponibles = aforo - ocupadas;
+            vh.txtAforo.setText("Plazas: " + ocupadas + "/" + aforo + " (Disponibles: " + disponibles + ")");
 
-            // 🔥 Estado del botón
+            // 🔥 Botón reservar
             if (clase.estaCompleta()) {
                 vh.btnReservar.setEnabled(false);
                 vh.btnReservar.setText("Clase completa");
             } else {
                 vh.btnReservar.setEnabled(true);
                 vh.btnReservar.setText("Reservar");
-                vh.btnReservar.setOnClickListener(v -> listener.onReservar(clase));
+                vh.btnReservar.setOnClickListener(v -> {
+                    if (listener != null) listener.onReservar(clase);
+                });
             }
         }
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         TextView txtHeader;
-
-        HeaderViewHolder(View v) {
-            super(v);
-            txtHeader = v.findViewById(R.id.txtDiaFecha);
-        }
+        HeaderViewHolder(View v) { super(v); txtHeader = v.findViewById(R.id.txtDiaFecha); }
     }
 
     static class ClaseViewHolder extends RecyclerView.ViewHolder {
         TextView txtHora, txtAforo;
         Button btnReservar;
-
         ClaseViewHolder(View v) {
             super(v);
             txtHora = v.findViewById(R.id.txtHora);
             txtAforo = v.findViewById(R.id.txtAforo);
             btnReservar = v.findViewById(R.id.btnReservar);
         }
+    }
+
+    public void actualizarItems(List<Object> nuevosItems) {
+        items.clear();
+        if (nuevosItems != null) items.addAll(nuevosItems);
+        notifyDataSetChanged();
     }
 }

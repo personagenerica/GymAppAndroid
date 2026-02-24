@@ -1,59 +1,56 @@
 package com.gymapp.model;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 public class Clase implements Serializable {
 
     private int id;
+
     @SerializedName("fecha_inicio")
-    private Date fechaInicio;
+    private String fechaInicio; // ISO 8601
 
     @SerializedName("fecha_fin")
-    private Date fechaFin;
+    private String fechaFin; // ISO 8601
 
     @SerializedName("aforo")
-    private int aforoMaximo;
-
-    private int plazasOcupadas;   // Mejor que calcular siempre usuarios.size()
+    private int aforo; // coincidir con backend
 
     private List<Usuario> usuarios;
-    private Monitor monitor;
 
-    // Constructor vacío (IMPORTANTE para Retrofit)
+    @SerializedName("monitor")
+    private MonitorId monitor; // solo el ID para backend
+
     public Clase() {}
 
-    // Getters y Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public Date getFechaInicio() { return fechaInicio; }
-    public void setFechaInicio(Date fechaInicio) { this.fechaInicio = fechaInicio; }
+    public String getFechaInicio() { return fechaInicio; }
+    public void setFechaInicio(String fechaInicio) { this.fechaInicio = fechaInicio; }
 
-    public Date getFechaFin() { return fechaFin; }
-    public void setFechaFin(Date fechaFin) { this.fechaFin = fechaFin; }
+    public String getFechaFin() { return fechaFin; }
+    public void setFechaFin(String fechaFin) { this.fechaFin = fechaFin; }
 
-    public int getAforoMaximo() { return aforoMaximo; }
-    public void setAforoMaximo(int aforoMaximo) { this.aforoMaximo = aforoMaximo; }
-
-    public int getPlazasOcupadas() { return plazasOcupadas; }
-    public void setPlazasOcupadas(int plazasOcupadas) { this.plazasOcupadas = plazasOcupadas; }
+    public int getAforo() { return aforo; }
+    public void setAforo(int aforo) { this.aforo = aforo; }
 
     public List<Usuario> getUsuarios() { return usuarios; }
     public void setUsuarios(List<Usuario> usuarios) { this.usuarios = usuarios; }
 
-    public Monitor getMonitor() { return monitor; }
-    public void setMonitor(Monitor monitor) { this.monitor = monitor; }
+    public MonitorId getMonitor() { return monitor; }
 
-    // 🔥 Método útil
+    // Nuevo método para setear monitor por ID
+    public void setMonitorId(int monitorId) {
+        this.monitor = new MonitorId(monitorId);
+    }
+
     public boolean estaCompleta() {
-        return plazasOcupadas >= aforoMaximo;
+        return usuarios != null && usuarios.size() >= aforo;
     }
 
     public int plazasDisponibles() {
-        return aforoMaximo - plazasOcupadas;
+        return aforo - (usuarios != null ? usuarios.size() : 0);
     }
 }

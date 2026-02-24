@@ -1,6 +1,8 @@
 package com.gymapp.services;
 
 import com.gymapp.model.Actor;
+import com.gymapp.model.Admin;
+import com.gymapp.model.Monitor;
 import com.gymapp.model.Usuario;
 
 import okhttp3.ResponseBody;
@@ -12,4 +14,10 @@ public interface ActorService {
 
     @POST("usuario")  // Solo /actor
     Call<ResponseBody> registrar(@Body Usuario usuario);
+
+    @POST("monitor")  // Solo /actor
+    Call<ResponseBody> registrar(@Body Monitor monitor);
+
+    @POST("admin")  // Solo /actor
+    Call<ResponseBody> registrar(@Body Admin admin);
 }

@@ -1,56 +1,44 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <!-- Hora de la clase -->
+    <EditText
+        android:id="@+id/etHora"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:hint="Hora (HH:mm)"
+        android:focusable="false"
+        android:clickable="true"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp"/>
 
-        <!-- Fecha Inicio -->
-        <EditText
-            android:id="@+id/etFechaInicio"
-            android:hint="Fecha Inicio (YYYY-MM-DD)"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    <!-- Aforo máximo -->
+    <EditText
+        android:id="@+id/etAforo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Aforo máximo"
+        android:inputType="number"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
 
-        <!-- Hora Inicio -->
-        <EditText
-            android:id="@+id/etHoraInicio"
-            android:hint="Hora Inicio (HH:MM)"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+    <!-- Botón para crear clase -->
+    <Button
+        android:id="@+id/btnCrearClase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Crear Clase"
+        android:layout_marginBottom="16dp"/>
 
-        <!-- Fecha Fin -->
-        <EditText
-            android:id="@+id/etFechaFin"
-            android:hint="Fecha Fin (YYYY-MM-DD)"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <!-- Hora Fin -->
-        <EditText
-            android:id="@+id/etHoraFin"
-            android:hint="Hora Fin (HH:MM)"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <!-- Aforo -->
-        <EditText
-            android:id="@+id/etAforo"
-            android:hint="Aforo máximo"
-            android:inputType="number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <!-- Botón -->
-        <Button
-            android:id="@+id/btnCrearClase"
-            android:text="Crear Clase"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"/>
-
-    </LinearLayout>
-</ScrollView>
+    <!-- Lista de clases -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerClases"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"/>
+</LinearLayout>

@@ -1,6 +1,5 @@
 package com.gymapp.services;
 
-import com.gymapp.ClaseCreateDTO;
 import com.gymapp.model.Clase;
 import java.util.List;
 import retrofit2.Call;
@@ -18,7 +17,7 @@ public interface ClaseService {
 
     // 🔹 Crear clase (solo monitor)
     @POST("clase")
-    Call<Clase> crearClase(@Body ClaseCreateDTO dto, @Header("Authorization") String token);
+    Call<Clase> crearClase(@Body Clase dto, @Header("Authorization") String token);
     // 🔹 Reservar clase usando solo JWT
     @POST("clase/{id}/reservar")
     Call<Clase> reservarClase(@Path("id") int id, @Header("Authorization") String token);

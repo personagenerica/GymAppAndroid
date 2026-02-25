@@ -2,14 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:padding="16dp">
 
-    <!-- BOTONES -->
-
+    <!-- BOTONES PRINCIPALES -->
     <Button
         android:id="@+id/btnClases"
         android:layout_width="0dp"
@@ -19,23 +16,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-
-
-    <Button
-        android:id="@+id/btnMonitores"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Monitores"
-        app:layout_constraintTop_toBottomOf="@id/btnClases"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
     <Button
         android:id="@+id/btnProductos"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Productos"
-        app:layout_constraintTop_toBottomOf="@id/btnMonitores"
+        app:layout_constraintTop_toBottomOf="@id/btnClases"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -48,38 +34,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- BOTÓN CREAR MONITOR SOLO PARA ADMIN -->
     <Button
         android:id="@+id/btnCrearMonitor"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Crear Monitor"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/btnPerfil"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
-        android:id="@+id/btnCrearUsuariosMonitores"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Crear Usuarios y Monitores"
-        app:layout_constraintTop_toBottomOf="@id/btnCrearMonitor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <Button
         android:id="@+id/btnLogout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Cerrar sesión"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/btnCrearUsuariosMonitores"
+        app:layout_constraintTop_toBottomOf="@id/btnCrearMonitor"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-
-
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
 
     <!-- MENÚ INFERIOR -->
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation_menu"
         android:layout_width="0dp"
@@ -88,5 +64,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

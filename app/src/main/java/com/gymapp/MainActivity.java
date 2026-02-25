@@ -129,9 +129,7 @@ public class MainActivity extends AppCompatActivity {
                         , "1234")
         );
 
-        // Combinar listas
-        //usuarios.addAll(monitores);
-        //usuarios.addAll(admin);
+
 
         StringBuilder resumen = new StringBuilder("Creación de actores:\n");
 

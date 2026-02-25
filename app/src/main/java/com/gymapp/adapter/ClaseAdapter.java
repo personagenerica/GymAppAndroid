@@ -18,7 +18,13 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private List<Object> items;
     private OnReservarClick listener;
+
+    // Formato de hora para mostrar en UI
     private SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
+
+    // Formato ISO 8601 que envía el backend
+    private SimpleDateFormat isoFormat =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault());
 
     public interface OnReservarClick {
         void onReservar(Clase clase);
@@ -38,7 +44,9 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
-    public int getItemCount() { return items.size(); }
+    public int getItemCount() {
+        return items.size();
+    }
 
     @NonNull
     @Override
@@ -71,23 +79,26 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String horaTexto = "Hora no disponible";
             try {
                 if (clase.getFechaInicio() != null && clase.getFechaFin() != null) {
-                    SimpleDateFormat sdfIso = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-                    sdfIso.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    Date inicio = sdfIso.parse(clase.getFechaInicio());
-                    Date fin = sdfIso.parse(clase.getFechaFin());
+                    Date inicio = isoFormat.parse(clase.getFechaInicio());
+                    Date fin = isoFormat.parse(clase.getFechaFin());
 
-                    String hInicio = formatoHora.format(inicio);
-                    String hFin = formatoHora.format(fin);
-                    horaTexto = hInicio + " - " + hFin;
+                    if (inicio != null && fin != null) {
+                        String hInicio = formatoHora.format(inicio);
+                        String hFin = formatoHora.format(fin);
+                        horaTexto = hInicio + " - " + hFin;
+                    }
                 }
-            } catch (Exception e) { e.printStackTrace(); }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             vh.txtHora.setText(horaTexto);
 
             // 👥 Mostrar aforo
             int ocupadas = clase.getUsuarios() != null ? clase.getUsuarios().size() : 0;
             int aforo = clase.getAforo();
             int disponibles = aforo - ocupadas;
-            vh.txtAforo.setText("Plazas: " + ocupadas + "/" + aforo + " (Disponibles: " + disponibles + ")");
+            vh.txtAforo.setText("Plazas: " + ocupadas + "/" + aforo +
+                    " (Disponibles: " + disponibles + ")");
 
             // 🔥 Botón reservar
             if (clase.estaCompleta()) {
@@ -95,6 +106,15 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 vh.btnReservar.setText("Clase completa");
             } else {
                 vh.btnReservar.setEnabled(true);
+
+                // Si el usuario ya está inscrito, mostrar "Reservado"
+                if (clase.getUsuarios() != null && !clase.getUsuarios().isEmpty()) {
+                    // Aquí puedes comprobar el ID del usuario actual si lo tienes
+                    // Por ejemplo:
+                    // boolean yaReservado = clase.getUsuarios().stream().anyMatch(u -> u.getId() == usuarioId);
+                    // Si yaReservado: vh.btnReservar.setText("Reservado");
+                }
+
                 vh.btnReservar.setText("Reservar");
                 vh.btnReservar.setOnClickListener(v -> {
                     if (listener != null) listener.onReservar(clase);
@@ -105,12 +125,17 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         TextView txtHeader;
-        HeaderViewHolder(View v) { super(v); txtHeader = v.findViewById(R.id.txtDiaFecha); }
+
+        HeaderViewHolder(View v) {
+            super(v);
+            txtHeader = v.findViewById(R.id.txtDiaFecha);
+        }
     }
 
     static class ClaseViewHolder extends RecyclerView.ViewHolder {
         TextView txtHora, txtAforo;
         Button btnReservar;
+
         ClaseViewHolder(View v) {
             super(v);
             txtHora = v.findViewById(R.id.txtHora);

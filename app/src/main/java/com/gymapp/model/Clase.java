@@ -1,29 +1,20 @@
 package com.gymapp.model;
 
-import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
 public class Clase implements Serializable {
 
     private int id;
-
-    @SerializedName("fecha_inicio")
-    private String fechaInicio; // ISO 8601
-
-    @SerializedName("fecha_fin")
-    private String fechaFin; // ISO 8601
-
-    @SerializedName("aforo")
-    private int aforo; // coincidir con backend
-
+    private String fechaInicio;
+    private String fechaFin;
+    private int aforo;
     private List<Usuario> usuarios;
-
-    @SerializedName("monitor")
-    private MonitorId monitor; // solo el ID del monitor
+    private Monitor monitor; // ahora es el monitor completo
 
     public Clase() {}
 
+    // --- Getters y setters ---
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -39,17 +30,19 @@ public class Clase implements Serializable {
     public List<Usuario> getUsuarios() { return usuarios; }
     public void setUsuarios(List<Usuario> usuarios) { this.usuarios = usuarios; }
 
-    public MonitorId getMonitor() { return monitor; }
+    public Monitor getMonitor() { return monitor; }
+    public void setMonitor(Monitor monitor) { this.monitor = monitor; }
 
-    // ✅ Método correcto para setear solo el ID del monitor
-    public void setMonitorId(int monitorId) {
-        this.monitor = new MonitorId(monitorId);
-    }
+    // ---------------------------
+    // MÉTODOS DE UTILIDAD
+    // ---------------------------
 
+    /** Comprueba si la clase ha alcanzado su aforo máximo */
     public boolean estaCompleta() {
         return usuarios != null && usuarios.size() >= aforo;
     }
 
+    /** Devuelve el número de plazas disponibles */
     public int plazasDisponibles() {
         return aforo - (usuarios != null ? usuarios.size() : 0);
     }

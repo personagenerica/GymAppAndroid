@@ -1,5 +1,7 @@
 package com.gymapp;
 
+import static com.gymapp.database.ApiClient.getClient;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,14 +9,17 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.gymapp.database.ApiClient;
 import com.gymapp.model.Actor;
 import com.gymapp.model.Admin;
 import com.gymapp.model.Monitor;
 import com.gymapp.model.Rol;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.gymapp.model.Usuario;
+import com.gymapp.services.ActorLoginService;
 import com.gymapp.services.ActorService;
 
 import java.util.ArrayList;
@@ -30,7 +35,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btnClases, btnMonitores, btnProductos, btnPerfil, btnCrear, btnLogout;
 
     private ActorService actorService;
 
@@ -39,44 +43,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ====== Vistas ======
-        btnClases = findViewById(R.id.btnClases);
-        btnProductos = findViewById(R.id.btnProductos);
-        btnPerfil = findViewById(R.id.btnPerfil);
-        btnLogout = findViewById(R.id.btnLogout);
-        btnCrear = findViewById(R.id.btnCrearUsuariosMonitores);
-
         // ====== SharedPreferences ======
         SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
         String rol = prefs.getString("rol", "");
         Log.d("DEBUG", prefs.getString("jwt_token", "jwt_token"));
 
-
-
-        // ====== Configurar Retrofit ======
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/") // Cambia según tu backend
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        actorService = retrofit.create(ActorService.class);
-
-        // ====== Clicks de botones ======
-        btnClases.setOnClickListener(v ->
-                startActivity(new Intent(this, ReservarClasesActivity.class)));
-
-        btnMonitores.setOnClickListener(v ->
-                Toast.makeText(this, "Pantalla Monitores pendiente", Toast.LENGTH_SHORT).show());
-
-        btnProductos.setOnClickListener(v ->
-                startActivity(new Intent(this, ProductoActivity.class)));
-
-        btnPerfil.setOnClickListener(v ->
-                startActivity(new Intent(this, PerfilActivity.class)));
-
-        btnCrear.setOnClickListener(v -> crearUsuariosYMonitores());
-
-        btnLogout.setOnClickListener(v -> cerrarSesion());
+        actorService = getClient(this).create(ActorService.class);
 
         // ====== Menú inferior ======
         BottomNavigationView bottomMenu = findViewById(R.id.navigation_menu);
@@ -85,13 +57,30 @@ public class MainActivity extends AppCompatActivity {
         bottomMenu.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.navigation_home) return true;
-            if (id == R.id.navigation_search) {
+            if (id == R.id.navigation_clases) {
                 startActivity(new Intent(this, ReservarClasesActivity.class));
                 return true;
             }
-            if (id == R.id.navigation_profile) {
+            if (id == R.id.navigation_productos) {
+                startActivity(new Intent(this, ProductoActivity.class));
+                return true;
+            }
+
+            if (id == R.id.navigation_perfil) {
                 startActivity(new Intent(this, PerfilActivity.class));
                 return true;
+            }
+
+            if (id == R.id.navigation_logout) {
+                prefs.edit().clear().apply();
+
+                Toast.makeText(this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(this, WelcomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                startActivity(intent);
+                finish();
             }
             return false;
         });
@@ -104,12 +93,12 @@ public class MainActivity extends AppCompatActivity {
 
         // 3 usuarios
         List<Usuario> usuarios = new ArrayList<>(Arrays.asList(
-                new Usuario("Usuario1","user1","Apellido1","user1@email.com",
-                        null,"612345678",25,null,"1234"),
-                new Usuario("Usuario2","user2","Apellido2","user2@email.com",
-                        null,"612345679",30,null,"1234"),
-                new Usuario("Usuario3","user3","Apellido3","user3@email.com",
-                        null,"612345680",28,null,"1234")
+                new Usuario("Usuario1", "user1", "Apellido1", "user1@email.com",
+                        null, "612345678", 25, null, "1234"),
+                new Usuario("Usuario2", "user2", "Apellido2", "user2@email.com",
+                        null, "612345679", 30, null, "1234"),
+                new Usuario("Usuario3", "user3", "Apellido3", "user3@email.com",
+                        null, "612345680", 28, null, "1234")
         ));
 
         // 3 monitores
@@ -127,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                         null, "698765432", 35, Rol.Admin
                         , "1234")
         );
-
 
 
         StringBuilder resumen = new StringBuilder("Creación de actores:\n");
@@ -191,21 +179,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    // =========================
-    // CERRAR SESIÓN
-    // =========================
-    private void cerrarSesion() {
-        SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
-        prefs.edit().clear().apply();
-
-        Toast.makeText(this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(this, WelcomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        startActivity(intent);
-        finish();
     }
 }

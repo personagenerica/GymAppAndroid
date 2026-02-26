@@ -6,11 +6,27 @@
         android:icon="@drawable/ic_home"
         android:title="Home" />
     <item
-        android:id="@+id/navigation_search"
+        android:id="@+id/navigation_clases"
         android:icon="@drawable/ic_search"
-        android:title="Reservar Clases" />
+        android:title="Clases" />
+
     <item
-        android:id="@+id/navigation_profile"
-        android:icon="@drawable/ic_profile"
+        android:id="@+id/navigation_productos"
+        android:icon="@drawable/ic_search"
+        android:title="Productos" />
+
+    <item
+        android:id="@+id/navigation_perfil"
+        android:icon="@drawable/ic_search"
         android:title="Perfil" />
+
+    <item
+        android:id="@+id/navigation_logout"
+        android:icon="@drawable/ic_search"
+        android:title="Cerrar sesion" />
+
+
+
+
+
 </menu>

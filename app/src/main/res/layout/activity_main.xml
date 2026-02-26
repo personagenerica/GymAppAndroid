@@ -6,74 +6,9 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- BOTONES PRINCIPALES -->
-    <Button
-        android:id="@+id/btnClases"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Clases"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <Button
-        android:id="@+id/btnProductos"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Productos"
-        app:layout_constraintTop_toBottomOf="@id/btnClases"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <Button
-        android:id="@+id/btnPerfil"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Perfil"
-        app:layout_constraintTop_toBottomOf="@id/btnProductos"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-    <Button
-        android:id="@+id/btnExportar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Exportar Datos"
-        app:layout_constraintTop_toBottomOf="@id/btnPerfil"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- BOTÓN CREAR MONITOR SOLO PARA ADMIN -->
-    <Button
-        android:id="@+id/btnCrearMonitor"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Crear Monitor"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/btnPerfil"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <Button
-        android:id="@+id/btnCrearUsuariosMonitores"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Crear Monitor"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/btnCrearMonitor"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Cerrar sesión"
-        app:layout_constraintTop_toBottomOf="@id/btnCrearUsuariosMonitores"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
 
     <!-- MENÚ INFERIOR -->
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation_menu"
         android:layout_width="0dp"
@@ -82,4 +17,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

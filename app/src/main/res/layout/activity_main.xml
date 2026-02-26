@@ -33,6 +33,14 @@
         app:layout_constraintTop_toBottomOf="@id/btnProductos"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+    <Button
+        android:id="@+id/btnExportar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Exportar Datos"
+        app:layout_constraintTop_toBottomOf="@id/btnPerfil"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- BOTÓN CREAR MONITOR SOLO PARA ADMIN -->
     <Button

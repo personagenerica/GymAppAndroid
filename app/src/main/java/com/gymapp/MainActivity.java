@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
         // ====== Vistas ======
         btnClases = findViewById(R.id.btnClases);
-        btnMonitores = findViewById(R.id.btnMonitores);
         btnProductos = findViewById(R.id.btnProductos);
         btnPerfil = findViewById(R.id.btnPerfil);
         btnLogout = findViewById(R.id.btnLogout);

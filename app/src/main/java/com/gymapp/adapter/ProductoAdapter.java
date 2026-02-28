@@ -1,46 +1,95 @@
 package com.gymapp.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.widget.Toast;
 
 import com.gymapp.R;
+import com.gymapp.FormularioProductoActivity;
 import com.gymapp.model.Producto;
+import com.gymapp.services.ProductoService;
+import com.gymapp.database.ApiClient;
 
 import java.util.List;
-//Para crear ListView y Spinner es necesario utilizar un adapter, que actúa como puente entre los componentes y
-//los datos, definiendo el diseño mediante un layout XML y asignando los valores a las vistas.
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ProductoAdapter extends ArrayAdapter<Producto> {
-    public ProductoAdapter(@NonNull Context context, List<Producto> productos) {
-        super(context, 0, productos); // Se usa 0 como resource porque se inflará la vista manualmente
+
+    private ProductoService productoService;
+
+    public ProductoAdapter(Context context, List<Producto> productos) {
+        super(context, 0, productos);
+        productoService = ApiClient.getClient(context).create(ProductoService.class);
     }
+
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        return createViewFromResource(position, convertView, parent, R.layout.item_selected);
-    }
-    @Override
-    public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        return createViewFromResource(position, convertView, parent, R.layout.spinner_item_drop);
-    }
-    private View createViewFromResource(int position, View convertView, ViewGroup parent, int layoutResource) {
-// 1. Obtener el objeto de datos para esta posición
-        Producto producto = getItem(position);
-        // 2. Inflar la vista si no se está reutilizando
+    public View getView(int position, View convertView, ViewGroup parent) {
+
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(layoutResource, parent, false); // Parent es el contenedor del ListView/Spinner
+            convertView = LayoutInflater.from(getContext())
+                    .inflate(R.layout.item_producto, parent, false);
         }
-// 3. Busca el TextView por el ID y asigna un texto
-        TextView textView = convertView.findViewById(R.id.textProducto);
-        if (producto != null && textView != null) {
-            textView.setText(producto.getId() + " - " + producto.getNombre());
+
+        Producto producto = getItem(position);
+
+        TextView tvProducto = convertView.findViewById(R.id.tvProducto);
+        Button btnEditar = convertView.findViewById(R.id.btnEditar);
+        Button btnEliminar = convertView.findViewById(R.id.btnEliminar);
+
+        if (producto != null) {
+            tvProducto.setText(producto.getId() + " - " + producto.getNombre());
         }
+
+        // EDITAR
+        btnEditar.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), FormularioProductoActivity.class);
+            intent.putExtra("id", producto.getId());
+            intent.putExtra("nombre", producto.getNombre());
+            intent.putExtra("tipo", producto.getTipo());
+            intent.putExtra("precio", producto.getPrecio());
+            intent.putExtra("stock", producto.getStock());
+            getContext().startActivity(intent);
+        });
+
+        // ELIMINAR con confirmación
+        btnEliminar.setOnClickListener(v -> {
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Eliminar")
+                    .setMessage("¿Seguro que quieres eliminar este producto?")
+                    .setPositiveButton("Sí", (dialog, which) -> {
+                        productoService.eliminarProducto(producto.getId())
+                                .enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                        if (response.isSuccessful()) {
+                                            remove(producto);
+                                            notifyDataSetChanged();
+                                            Toast.makeText(getContext(), "Producto eliminado", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(getContext(), "Error al eliminar", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable t) {
+                                        Toast.makeText(getContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+        });
+
         return convertView;
     }
 }
-

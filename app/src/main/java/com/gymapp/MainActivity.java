@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.gymapp.database.ApiClient;
 import com.gymapp.model.Actor;
 import com.gymapp.model.Admin;
 import com.gymapp.model.Monitor;
@@ -19,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.gymapp.model.Usuario;
-import com.gymapp.services.ActorLoginService;
 import com.gymapp.services.ActorService;
 
 import java.util.ArrayList;
@@ -30,8 +27,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -4,11 +4,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:padding="16dp">
 
+    <!-- Imagen principal -->
+    <ImageView
+        android:id="@+id/imgHome"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:src="@drawable/ic_launcher_foreground"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="60dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- MENÚ INFERIOR -->
+    <!-- Texto de bienvenida -->
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="¡Bienvenido a SCULPTED BY THE GODS!"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/imgHome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Subtexto opcional -->
+    <TextView
+        android:id="@+id/tvSubWelcome"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Comienza tu viaje hacia un estilo de vida saludable"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvWelcome"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+    <!-- MENÚ INFERIOR (opcional, oculto para la bienvenida) -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation_menu"
         android:layout_width="0dp"

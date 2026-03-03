@@ -1,13 +1,14 @@
 package com.gymapp.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Clase implements Serializable {
 
     private int id;
-    private String fechaInicio;
-    private String fechaFin;
+    private LocalDateTime fechaInicio;
+    private LocalDateTime fechaFin;
     private int aforo;
     private List<Usuario> usuarios;
     private Monitor monitor; // ahora es el monitor completo
@@ -18,11 +19,11 @@ public class Clase implements Serializable {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public String getFechaInicio() { return fechaInicio; }
-    public void setFechaInicio(String fechaInicio) { this.fechaInicio = fechaInicio; }
+    public LocalDateTime getFechaInicio() { return fechaInicio; }
+    public void setFechaInicio(LocalDateTime fechaInicio) { this.fechaInicio = fechaInicio; }
 
-    public String getFechaFin() { return fechaFin; }
-    public void setFechaFin(String fechaFin) { this.fechaFin = fechaFin; }
+    public LocalDateTime getFechaFin() { return fechaFin; }
+    public void setFechaFin(LocalDateTime fechaFin) { this.fechaFin = fechaFin; }
 
     public int getAforo() { return aforo; }
     public void setAforo(int aforo) { this.aforo = aforo; }

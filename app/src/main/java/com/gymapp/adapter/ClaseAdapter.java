@@ -14,9 +14,15 @@ import com.gymapp.R;
 import com.gymapp.model.Actor;
 import com.gymapp.model.Clase;
 import com.gymapp.model.Rol;
+import com.gymapp.services.ClaseService;
+import com.gymapp.database.ApiClient;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -24,14 +30,9 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int TYPE_CLASE = 1;
 
     private List<Object> items;
-    private OnReservarClick listener;
-
-    // Formato de hora para mostrar en UI
-    private SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
-
-    // Formato ISO 8601 que envía el backend
-    private SimpleDateFormat isoFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault());
+    private final OnReservarClick listener;
+    private final SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    private final SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault());
 
     public interface OnReservarClick {
         void onReservar(Clase clase);
@@ -44,10 +45,8 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        Object o = items.get(position);
-        if (o instanceof String) return TYPE_HEADER;
-        if (o instanceof Clase) return TYPE_CLASE;
-        return TYPE_HEADER;
+        Object item = items.get(position);
+        return (item instanceof String) ? TYPE_HEADER : TYPE_CLASE;
     }
 
     @Override
@@ -73,86 +72,106 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         Object item = items.get(position);
 
         if (holder instanceof HeaderViewHolder) {
-            String header = item instanceof String ? (String) item : "Sin día";
-            ((HeaderViewHolder) holder).txtHeader.setText(header);
+            ((HeaderViewHolder) holder).txtHeader.setText((String) item);
 
-        } else if (holder instanceof ClaseViewHolder) {
-            if (!(item instanceof Clase)) return;
-
+        } else if (holder instanceof ClaseViewHolder && item instanceof Clase) {
             Clase clase = (Clase) item;
             ClaseViewHolder vh = (ClaseViewHolder) holder;
 
-            // 🕒 Mostrar horario
-            String horaTexto = "Hora no disponible";
-            try {
-                if (clase.getFechaInicio() != null && clase.getFechaFin() != null) {
-                    Date inicio = isoFormat.parse(clase.getFechaInicio());
-                    Date fin = isoFormat.parse(clase.getFechaFin());
-
-                    if (inicio != null && fin != null) {
-                        String hInicio = formatoHora.format(inicio);
-                        String hFin = formatoHora.format(fin);
-                        horaTexto = hInicio + " - " + hFin;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            vh.txtHora.setText(horaTexto);
-
-            // 👥 Mostrar aforo
+            // Mostrar horario y aforo
+            vh.txtHora.setText(getHorarioTexto(clase));
             int ocupadas = clase.getUsuarios() != null ? clase.getUsuarios().size() : 0;
             int aforo = clase.getAforo();
-            int disponibles = aforo - ocupadas;
             vh.txtAforo.setText("Plazas: " + ocupadas + "/" + aforo +
-                    " (Disponibles: " + disponibles + ")");
+                    " (Disponibles: " + (aforo - ocupadas) + ")");
 
-            // 🔥 Botón reservar
-            if (clase.estaCompleta()) {
-                vh.btnReservar.setEnabled(false);
-                vh.btnReservar.setText("Clase completa");
-            } else {
-                vh.btnReservar.setEnabled(true);
-
-                // Si el usuario ya está inscrito, mostrar "Reservado"
-                if (clase.getUsuarios() != null && !clase.getUsuarios().isEmpty()) {
-                    // Aquí puedes comprobar el ID del usuario actual si lo tienes
-                    // Por ejemplo:
-                    // boolean yaReservado = clase.getUsuarios().stream().anyMatch(u -> u.getId() == usuarioId);
-                    // Si yaReservado: vh.btnReservar.setText("Reservado");
-                }
-
-                vh.btnReservar.setText("Reservar");
-                vh.btnanularReserva.setText("Anular Reserva");
-                vh.btnanularReserva.setVisibility(GONE);
-
-                SharedPreferences prefs = vh.itemView.getContext().getSharedPreferences("auth_prefs", MODE_PRIVATE);
-                String usernameUserLogin = prefs.getString("username", null);
-                String rolUserLogin = prefs.getString("rol", null);
-
-                for (Actor a: clase.getUsuarios()) {
-                    if(a.getUsername().equals(usernameUserLogin)) {
-                        vh.btnReservar.setVisibility(GONE);
-                        vh.btnanularReserva.setVisibility(VISIBLE);
-
-                        break;
-                    }
-                }
-
-                if(rolUserLogin.equals(Rol.Monitor.toString()) ||  rolUserLogin.equals(Rol.Admin.toString())) {
-                    vh.btnReservar.setVisibility(GONE);
-                }
-
-                vh.btnReservar.setOnClickListener(v -> {
-                    if (listener != null) listener.onReservar(clase);
-                });
-            }
+            configurarBotones(vh, clase);
         }
     }
 
+    private String getHorarioTexto(Clase clase) {
+        try {
+            if (clase.getFechaInicio() != null && clase.getFechaFin() != null) {
+                Date inicio = isoFormat.parse(clase.getFechaInicio());
+                Date fin = isoFormat.parse(clase.getFechaFin());
+                if (inicio != null && fin != null) {
+                    return formatoHora.format(inicio) + " - " + formatoHora.format(fin);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "Hora no disponible";
+    }
+
+    private void configurarBotones(ClaseViewHolder vh, Clase clase) {
+        SharedPreferences prefs = vh.itemView.getContext().getSharedPreferences("auth_prefs", MODE_PRIVATE);
+        String username = prefs.getString("username", null);
+        String token = prefs.getString("jwt_token", null);
+        String rol = prefs.getString("rol", null);
+
+        boolean usuarioReservado = false;
+        if (clase.getUsuarios() != null) {
+            for (Actor a : clase.getUsuarios()) {
+                if (a.getUsername().equals(username)) {
+                    usuarioReservado = true;
+                    break;
+                }
+            }
+        }
+
+        // Reset visibilidad
+        vh.btnReservar.setVisibility(VISIBLE);
+        vh.btnanularReserva.setVisibility(GONE);
+
+        if (rol.equals(Rol.Monitor.toString()) || rol.equals(Rol.Admin.toString())) {
+            vh.btnReservar.setVisibility(GONE);
+        } else if (usuarioReservado) {
+            vh.btnReservar.setVisibility(GONE);
+            vh.btnanularReserva.setVisibility(VISIBLE);
+        } else if (clase.estaCompleta()) {
+            vh.btnReservar.setEnabled(false);
+            vh.btnReservar.setText("Clase completa");
+        } else {
+            vh.btnReservar.setEnabled(true);
+            vh.btnReservar.setText("Reservar");
+        }
+
+        // Reservar clase
+        vh.btnReservar.setOnClickListener(v -> {
+            if (listener != null) listener.onReservar(clase);
+        });
+
+        // Anular reserva
+        vh.btnanularReserva.setOnClickListener(v -> {
+            ClaseService claseService = ApiClient.getClient(vh.itemView.getContext()).create(ClaseService.class);
+            claseService.anularClase(clase.getId(), "Bearer " + token).enqueue(new Callback<Clase>() {
+                @Override
+                public void onResponse(Call<Clase> call, Response<Clase> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(vh.itemView.getContext(), "Reserva anulada", Toast.LENGTH_SHORT).show();
+
+                        if (clase.getUsuarios() != null) {
+                            clase.getUsuarios().removeIf(u -> u.getUsername().equals(username));
+                        }
+
+                        notifyItemChanged(vh.getAdapterPosition());
+                    } else {
+                        Toast.makeText(vh.itemView.getContext(), "Error al anular reserva", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Clase> call, Throwable t) {
+                    Toast.makeText(vh.itemView.getContext(), "Fallo de red", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+    // ViewHolders
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         TextView txtHeader;
-
         HeaderViewHolder(View v) {
             super(v);
             txtHeader = v.findViewById(R.id.txtDiaFecha);
@@ -161,8 +180,7 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     static class ClaseViewHolder extends RecyclerView.ViewHolder {
         TextView txtHora, txtAforo;
-        Button btnReservar,btnanularReserva;
-
+        Button btnReservar, btnanularReserva;
         ClaseViewHolder(View v) {
             super(v);
             txtHora = v.findViewById(R.id.txtHora);
@@ -170,11 +188,5 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             btnReservar = v.findViewById(R.id.btnReservar);
             btnanularReserva = v.findViewById(R.id.btnanularReserva);
         }
-    }
-
-    public void actualizarItems(List<Object> nuevosItems) {
-        items.clear();
-        if (nuevosItems != null) items.addAll(nuevosItems);
-        notifyDataSetChanged();
     }
 }

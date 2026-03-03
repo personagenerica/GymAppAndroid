@@ -1,42 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <!-- Hora de la clase -->
-    <EditText
-        android:id="@+id/etHora"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Hora (HH:mm)"
-        android:inputType="time"
-        android:padding="12dp"
-        android:layout_marginBottom="8dp"/>
-
-    <!-- Aforo máximo -->
-    <EditText
-        android:id="@+id/etAforo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Aforo máximo"
-        android:inputType="number"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Botón crear clase, solo MONITOR lo verá -->
-    <Button
-        android:id="@+id/btnCrearClase"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Crear Clase"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Lista de clases -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerClases"
+    <!-- CONTENIDO -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1">
+
+        <EditText
+            android:id="@+id/etHora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Hora (HH:mm)"
+            android:inputType="time"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etAforo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Aforo máximo"
+            android:inputType="number"
+            android:layout_marginBottom="16dp"/>
+
+        <Button
+            android:id="@+id/btnCrearClase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear Clase"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerClases"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <!-- MENÚ INFERIOR FIJO -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:menu="@menu/nav_menu_item"
+        app:labelVisibilityMode="labeled"
+        app:itemTextColor="@color/black"
+        app:itemIconTint="@color/black"/>
+
 </LinearLayout>

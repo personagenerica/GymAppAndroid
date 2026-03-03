@@ -22,6 +22,9 @@ public interface ClaseService {
     @POST("clase/{id}/reservar")
     Call<Clase> reservarClase(@Path("id") int id, @Header("Authorization") String token);
 
+    @POST("clase/{id}/anular")
+    Call<Clase> anularClase(@Path("id") int id, @Header("Authorization") String token);
+
     // 🔹 Obtener clase por ID
     @GET("clase/{id}")
     Call<Clase> getClase(@Path("id") int id);

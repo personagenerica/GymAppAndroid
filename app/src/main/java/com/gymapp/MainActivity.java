@@ -11,9 +11,26 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.gymapp.model.Actor;
+import com.gymapp.model.Admin;
+import com.gymapp.model.Monitor;
+import com.gymapp.model.Rol;
+import com.gymapp.model.Usuario;
 import com.gymapp.services.ActorService;
+
 import android.widget.ImageView;
+
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActorService actorService;
@@ -22,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         ImageView imgHome = findViewById(R.id.imgHome);
 
@@ -76,5 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
             return false;
         });
+
     }
+
+
 }

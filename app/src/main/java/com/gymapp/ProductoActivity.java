@@ -1,5 +1,7 @@
 package com.gymapp;
 
+import static android.view.View.GONE;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +15,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.gymapp.adapter.ProductoAdapter;
 import com.gymapp.database.ApiClient;
 import com.gymapp.model.Producto;
+import com.gymapp.model.Rol;
+import com.gymapp.model.Usuario;
 import com.gymapp.services.ProductoService;
 
 import java.util.List;
@@ -38,7 +42,10 @@ public class ProductoActivity extends AppCompatActivity {
         cargarProductos();
 
         // Botón para crear un nuevo producto
+
+
         Button btnNuevo = findViewById(R.id.btnNuevoProducto);
+
         btnNuevo.setOnClickListener(v -> {
             Intent intent = new Intent(ProductoActivity.this, FormularioProductoActivity.class);
             startActivity(intent);
@@ -47,6 +54,9 @@ public class ProductoActivity extends AppCompatActivity {
         // ====== SharedPreferences ======
         SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
 
+        if (prefs.getString("rol", null) == Rol.Usuario.toString()) {
+            btnNuevo.setVisibility(GONE);
+        }
         // ====== Menú inferior (igual que en MainActivity) ======
         BottomNavigationView bottomMenu = findViewById(R.id.navigation_menu);
         bottomMenu.setSelectedItemId(R.id.navigation_productos); // Tab actual

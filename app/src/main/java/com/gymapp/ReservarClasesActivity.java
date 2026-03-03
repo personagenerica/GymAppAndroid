@@ -1,9 +1,9 @@
 package com.gymapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,6 +18,7 @@ import com.gymapp.model.Clase;
 import com.gymapp.model.Monitor;
 import com.gymapp.model.Rol;
 import com.gymapp.services.ClaseService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
@@ -47,11 +48,11 @@ public class ReservarClasesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservar_clases);
 
+        // ====== Inicializar views ======
         recyclerClases = findViewById(R.id.recyclerClases);
         etHora = findViewById(R.id.etHora);
         etAforo = findViewById(R.id.etAforo);
         btnCrearClase = findViewById(R.id.btnCrearClase);
-
         recyclerClases.setLayoutManager(new LinearLayoutManager(this));
 
         // ====== SharedPreferences ======
@@ -59,62 +60,96 @@ public class ReservarClasesActivity extends AppCompatActivity {
         token = prefs.getString("jwt_token", "");
         rol = prefs.getString("rol", "");
 
+        // ====== Configurar BottomNavigationView ======
+        BottomNavigationView bottomMenu = findViewById(R.id.navigation_menu);
+        bottomMenu.setSelectedItemId(R.id.navigation_clases);
+        bottomMenu.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.navigation_home) {
+                startActivity(new Intent(this, MainActivity.class));
+                return true;
+            }
+            if (id == R.id.navigation_clases) {
+                return true; // ya estamos aquí
+            }
+            if (id == R.id.navigation_productos) {
+                startActivity(new Intent(this, ProductoActivity.class));
+                return true;
+            }
+            if (id == R.id.navigation_perfil) {
+                startActivity(new Intent(this, PerfilActivity.class));
+                return true;
+            }
+            if (id == R.id.navigation_logout) {
+                prefs.edit().clear().apply();
+                Toast.makeText(this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, WelcomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+                return true;
+            }
+
+            return false;
+        });
+
+        // ====== Inicializar servicio ======
         claseService = ApiClient.getClient(this).create(ClaseService.class);
 
-        // ====== Solo monitor puede crear clases ======
+        // ====== Mostrar botón solo si es MONITOR ======
         if ("MONITOR".equalsIgnoreCase(rol)) {
             btnCrearClase.setOnClickListener(v -> crearClase());
         } else {
-            btnCrearClase.setVisibility(View.GONE);
-            etHora.setVisibility(View.GONE);
-            etAforo.setVisibility(View.GONE);
+            btnCrearClase.setVisibility(Button.GONE);
+            etHora.setVisibility(EditText.GONE);
+            etAforo.setVisibility(EditText.GONE);
         }
 
+        // ====== Cargar clases ======
         cargarClases();
     }
 
     /** ====== Cargar clases y agrupar por fecha ====== */
     private void cargarClases() {
-        claseService.listarClases("Bearer " + token)
-                .enqueue(new Callback<List<Clase>>() {
-                    @Override
-                    public void onResponse(Call<List<Clase>> call, Response<List<Clase>> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            List<Clase> clases = response.body();
-                            List<Object> items = new ArrayList<>();
+        claseService.listarClases("Bearer " + token).enqueue(new Callback<List<Clase>>() {
+            @Override
+            public void onResponse(Call<List<Clase>> call, Response<List<Clase>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Clase> clases = response.body();
+                    List<Object> items = new ArrayList<>();
 
-                            Map<String, List<Clase>> agrupadas = new TreeMap<>();
-                            for (Clase c : clases) {
-                                String dia = c.getFechaInicio() != null && c.getFechaInicio().length() >= 10
-                                        ? c.getFechaInicio().substring(0, 10)
-                                        : "Sin fecha";
-                                agrupadas.computeIfAbsent(dia, k -> new ArrayList<>()).add(c);
-                            }
-
-                            for (String dia : agrupadas.keySet()) {
-                                items.add("📅 " + dia);
-                                items.addAll(agrupadas.get(dia));
-                            }
-
-                            ClaseAdapter adapter = new ClaseAdapter(items,
-                                    clase -> reservarClase(clase.getId()));
-                            recyclerClases.setAdapter(adapter);
-                        } else {
-                            Toast.makeText(ReservarClasesActivity.this,
-                                    "No se pudieron cargar las clases ❌", Toast.LENGTH_SHORT).show();
-                        }
+                    Map<String, List<Clase>> agrupadas = new TreeMap<>();
+                    for (Clase c : clases) {
+                        String dia = (c.getFechaInicio() != null && c.getFechaInicio().length() >= 10)
+                                ? c.getFechaInicio().substring(0, 10)
+                                : "Sin fecha";
+                        agrupadas.computeIfAbsent(dia, k -> new ArrayList<>()).add(c);
                     }
 
-                    @Override
-                    public void onFailure(Call<List<Clase>> call, Throwable t) {
-                        Toast.makeText(ReservarClasesActivity.this,
-                                "Error de conexión ⚠", Toast.LENGTH_SHORT).show();
-                        Log.e("ERROR_LOAD", t.getMessage(), t);
+                    for (String dia : agrupadas.keySet()) {
+                        items.add("📅 " + dia);
+                        items.addAll(agrupadas.get(dia));
                     }
-                });
+
+                    ClaseAdapter adapter = new ClaseAdapter(items, clase -> reservarClase(clase.getId()));
+                    recyclerClases.setAdapter(adapter);
+                } else {
+                    Toast.makeText(ReservarClasesActivity.this,
+                            "No se pudieron cargar las clases ❌", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Clase>> call, Throwable t) {
+                Toast.makeText(ReservarClasesActivity.this,
+                        "Error de conexión ⚠", Toast.LENGTH_SHORT).show();
+                Log.e("ERROR_LOAD", t.getMessage(), t);
+            }
+        });
     }
 
-    /** ====== Crear clase (solo monitor) ====== */
+    /** ====== Crear clase (solo MONITOR) ====== */
     private void crearClase() {
         String hora = etHora.getText().toString().trim();
         String aforoStr = etAforo.getText().toString().trim();
@@ -145,7 +180,7 @@ public class ReservarClasesActivity extends AppCompatActivity {
         nuevaClase.setFechaFin(sdf.format(fechaFin));
         nuevaClase.setAforo(aforo);
 
-        // ====== Crear monitor completo desde SharedPreferences ======
+        // ====== Monitor desde SharedPreferences ======
         SharedPreferences prefs = getSharedPreferences("auth_prefs", MODE_PRIVATE);
         Monitor monitorActual = new Monitor(
                 prefs.getInt("actor_id", 0),
@@ -159,61 +194,53 @@ public class ReservarClasesActivity extends AppCompatActivity {
                 Rol.Monitor,
                 prefs.getString("password", "")
         );
-
         nuevaClase.setMonitor(monitorActual);
 
         // ====== Log JSON ======
-        Gson gson = new Gson();
-        Log.d("DEBUG_JSON", gson.toJson(nuevaClase));
+        Log.d("DEBUG_JSON", new Gson().toJson(nuevaClase));
 
         // ====== Enviar clase ======
-        claseService.crearClase(nuevaClase, "Bearer " + token)
-                .enqueue(new Callback<Clase>() {
-                    @Override
-                    public void onResponse(Call<Clase> call, Response<Clase> response) {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(ReservarClasesActivity.this,
-                                    "Clase creada ✅", Toast.LENGTH_SHORT).show();
-                            cargarClases();
-                        } else {
-                            Toast.makeText(ReservarClasesActivity.this,
-                                    "Error al crear ❌ (" + response.code() + ")", Toast.LENGTH_SHORT).show();
-                            Log.e("ERROR_CREATE", response.message());
-                        }
-                    }
+        claseService.crearClase(nuevaClase, "Bearer " + token).enqueue(new Callback<Clase>() {
+            @Override
+            public void onResponse(Call<Clase> call, Response<Clase> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ReservarClasesActivity.this, "Clase creada ✅", Toast.LENGTH_SHORT).show();
+                    cargarClases();
+                } else {
+                    Toast.makeText(ReservarClasesActivity.this,
+                            "Error al crear ❌ (" + response.code() + ")", Toast.LENGTH_SHORT).show();
+                    Log.e("ERROR_CREATE", response.message());
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<Clase> call, Throwable t) {
-                        Toast.makeText(ReservarClasesActivity.this,
-                                "Error de conexión ⚠", Toast.LENGTH_SHORT).show();
-                        Log.e("ERROR_CREATE", t.getMessage(), t);
-                    }
-                });
+            @Override
+            public void onFailure(Call<Clase> call, Throwable t) {
+                Toast.makeText(ReservarClasesActivity.this, "Error de conexión ⚠", Toast.LENGTH_SHORT).show();
+                Log.e("ERROR_CREATE", t.getMessage(), t);
+            }
+        });
     }
 
     /** ====== Reservar clase (usuario) ====== */
     private void reservarClase(int claseId) {
-        claseService.reservarClase(claseId, "Bearer " + token)
-                .enqueue(new Callback<Clase>() {
-                    @Override
-                    public void onResponse(Call<Clase> call, Response<Clase> response) {
-                        if (response.isSuccessful()) {
-                            Toast.makeText(ReservarClasesActivity.this,
-                                    "Clase reservada ✅", Toast.LENGTH_SHORT).show();
-                            cargarClases();
-                        } else {
-                            Toast.makeText(ReservarClasesActivity.this,
-                                    "No se pudo reservar ❌ (" + response.code() + ")", Toast.LENGTH_SHORT).show();
-                            Log.e("ERROR_RESERVA", response.message());
-                        }
-                    }
+        claseService.reservarClase(claseId, "Bearer " + token).enqueue(new Callback<Clase>() {
+            @Override
+            public void onResponse(Call<Clase> call, Response<Clase> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ReservarClasesActivity.this, "Clase reservada ✅", Toast.LENGTH_SHORT).show();
+                    cargarClases();
+                } else {
+                    Toast.makeText(ReservarClasesActivity.this,
+                            "No se pudo reservar ❌ (" + response.code() + ")", Toast.LENGTH_SHORT).show();
+                    Log.e("ERROR_RESERVA", response.message());
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<Clase> call, Throwable t) {
-                        Toast.makeText(ReservarClasesActivity.this,
-                                "Error de conexión ⚠", Toast.LENGTH_SHORT).show();
-                        Log.e("ERROR_RESERVA", t.getMessage(), t);
-                    }
-                });
+            @Override
+            public void onFailure(Call<Clase> call, Throwable t) {
+                Toast.makeText(ReservarClasesActivity.this, "Error de conexión ⚠", Toast.LENGTH_SHORT).show();
+                Log.e("ERROR_RESERVA", t.getMessage(), t);
+            }
+        });
     }
 }

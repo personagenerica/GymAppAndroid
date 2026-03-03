@@ -1,12 +1,19 @@
 package com.gymapp.adapter;
 
+import static android.content.Context.MODE_PRIVATE;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import android.content.SharedPreferences;
 import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gymapp.R;
+import com.gymapp.model.Actor;
 import com.gymapp.model.Clase;
+import com.gymapp.model.Rol;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -116,6 +123,26 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 }
 
                 vh.btnReservar.setText("Reservar");
+                vh.btnanularReserva.setText("Anular Reserva");
+                vh.btnanularReserva.setVisibility(GONE);
+
+                SharedPreferences prefs = vh.itemView.getContext().getSharedPreferences("auth_prefs", MODE_PRIVATE);
+                String usernameUserLogin = prefs.getString("username", null);
+                String rolUserLogin = prefs.getString("rol", null);
+
+                for (Actor a: clase.getUsuarios()) {
+                    if(a.getUsername().equals(usernameUserLogin)) {
+                        vh.btnReservar.setVisibility(GONE);
+                        vh.btnanularReserva.setVisibility(VISIBLE);
+
+                        break;
+                    }
+                }
+
+                if(rolUserLogin.equals(Rol.Monitor.toString()) ||  rolUserLogin.equals(Rol.Admin.toString())) {
+                    vh.btnReservar.setVisibility(GONE);
+                }
+
                 vh.btnReservar.setOnClickListener(v -> {
                     if (listener != null) listener.onReservar(clase);
                 });
@@ -134,13 +161,14 @@ public class ClaseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     static class ClaseViewHolder extends RecyclerView.ViewHolder {
         TextView txtHora, txtAforo;
-        Button btnReservar;
+        Button btnReservar,btnanularReserva;
 
         ClaseViewHolder(View v) {
             super(v);
             txtHora = v.findViewById(R.id.txtHora);
             txtAforo = v.findViewById(R.id.txtAforo);
             btnReservar = v.findViewById(R.id.btnReservar);
+            btnanularReserva = v.findViewById(R.id.btnanularReserva);
         }
     }
 

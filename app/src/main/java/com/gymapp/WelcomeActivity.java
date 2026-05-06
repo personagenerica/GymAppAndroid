@@ -76,7 +76,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         null, "612345680", 28, null, "1234")
         ));
 
-        List<Monitor> monitores = Arrays.asList(
+        List<Monitor> conductores = Arrays.asList(
                 new Monitor("Monitor1", "monitor1", "ApellidoM1", "monitor1@email.com",
                         null, "698765432", 35, Rol.Monitor, "1234"),
                 new Monitor("Monitor2", "monitor2", "ApellidoM2", "monitor2@email.com",
@@ -96,8 +96,8 @@ public class WelcomeActivity extends AppCompatActivity {
             actorService.registrar((Usuario) a).enqueue(crearCallback(a.getUsername(), resumen));
         }
 
-        for (Monitor m : monitores) {
-            actorService.registrar(m).enqueue(crearCallback(m.getUsername(), resumen));
+        for (Conductor c : conductores) {
+            actorService.registrar(c).enqueue(crearCallback(c.getUsername(), resumen));
         }
 
         for (Admin a : admins) {

@@ -52,10 +52,6 @@
             android:exported="true">
         </activity>
 
-        <activity
-            android:name=".ProductoActivity"
-            android:exported="true">
-        </activity>
 
         <activity
             android:name=".ReservarClasesActivity"
